@@ -6,6 +6,42 @@
 //ua_id	app_id	user_id	app_data	snack_code	app_status
 
 const joi = require("joi");
+const db = require('../../db/db_connect');
+const {Sequelize, DataTypes} = require('sequelize')
+
+var all_user_apps = db.define('user_apps', {
+    
+    ua_id:{
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+    app_id:{
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+    user_id:{
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+    app_data:{
+        type: DataTypes.JSON,
+        allowNull: false
+    },
+    snack_code:{
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    app_status:{
+        type: DataTypes.STRING,
+        allowNull: false
+    }
+}   ,{
+        freezeTableName: true,
+        timestamps: false
+    }
+)
+
+
 
 const user_apps_model = function (user_apps) {
     this.ua_id = user_apps.ua_id;
@@ -37,5 +73,6 @@ module.exports = {
     user_apps_model,
     user_app_create,
     user_app_update,
-    user_app_delete
+    user_app_delete,
+    all_user_apps
 }

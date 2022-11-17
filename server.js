@@ -26,7 +26,7 @@ app.get('/user/apps',user_apps.user_apps.get);
 app.post('/user/app',user_apps.user_apps.update);
 app.delete('/user/app',user_apps.user_apps.delete);
 app.get('/user/app',user_apps.user_apps.getsingle);
-// app.delete('/user/app/delete/:name',)
+
 
 
 
@@ -35,6 +35,9 @@ app.get('/user/app',user_apps.user_apps.getsingle);
 
 app.get('/apps/get/all',aapps.aapps.getAll);
 app.post('/apps/create/',aapps.aapps.createnewapp);
+
+// Delete By Owner Id
+app.delete('/user/app/delete/:id', aapps.aapps.delByOwnerId);
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)

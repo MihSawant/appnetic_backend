@@ -1,4 +1,6 @@
 const joi = require('joi');
+const {Sequelize, DataTypes} = require('sequelize');
+const db = require('../../db/db_connect')
 var User = function (user) {
     this.first_name = user.first_name;
     this.last_name = user.last_name;
@@ -37,3 +39,4 @@ module.exports = {
 
     User,User_registers,USer_login,user_name_check
 };
+

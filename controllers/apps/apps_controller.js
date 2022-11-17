@@ -31,9 +31,9 @@ aapps.getAll = function (request, response) {
 }
 
 
-aapps.delByName = function (request, response){
+aapps.delByOwnerId = function (request, response){
     try{
-        aapps.deleteAppByName(request, response);
+        aapps.deleteByOwnerId(request, response);
 
 
     }catch (e){
@@ -119,10 +119,10 @@ aapps.allApps =  async function (request, response){
 }
 
 
-aapps.deleteAppByName = function (request, response){
+aapps.deleteByOwnerId = function (request, response){
     aapps.destroy({
         where:{
-            app_name: request.app_name
+            owner_id: request.owner_id
         }
     });
     response.status(200).json({"message": "ok", "deleted": request.app_name})
