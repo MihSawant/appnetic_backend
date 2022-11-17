@@ -40,3 +40,6 @@ module.exports = {
     User,User_registers,USer_login,user_name_check
 };
 
+
+
+// function
