@@ -5,16 +5,18 @@
 //appnetic_api
 
 
-const jwt = require('jsonwebtoken');
 const db = require('../../db/db_conn');
-const user_apps = require('../../models/user_apps/user_apps_model')
 const func = require("../../others/functions")
-const joi = require("joi");
+
+const user_apps = require("../../models/user_apps/user_apps_model")
+
+
+
 user_apps.create = function (req, res) {
 
 
     try {
-        const schema = user_apps.user_app_create.validate(req.body);
+        const schema = user_apps.user_app_create;
         if (schema.error) {
             throw(schema.error);
         } else {
@@ -36,7 +38,7 @@ user_apps.create = function (req, res) {
                             "snack_code": null,
                             "app_status": "draft"
                         }
-                        db.query('INSERT into user_apps set ? ', data, function (dberr1, dbres1) {
+                        db.query('INSERT into user_apps set ? ', data, function (dberr1) {
                             if (dberr1) {
                                 throw(dberr1);
                             } else {
@@ -119,7 +121,7 @@ user_apps.update = function (req, res) {
 
                         }
 
-                        db.query("update user_apps set  ? where ua_id =" + req.body.ua_id, data, function (dberr1, dbres1) {
+                        db.query("update user_apps set  ? where ua_id =" + req.body.ua_id, data, function (dberr1) {
                             if (dberr1) {
                                 res.json({"error": true, "message": dberr1.message});
                             } else {
@@ -156,7 +158,6 @@ user_apps.delete = function (req, res) {
         //check jwt
 
         try {
-            const c = func.jwtdecode(req, res);
             db.query("select count(*) as c from user_apps where ua_id=" + req.body.ua_id + " AND app_id=" + req.body.app_id, function (dberr, dbress) {
 
 
@@ -164,7 +165,7 @@ user_apps.delete = function (req, res) {
                     res.json({"error": true, "message": dberr.message});
                 } else {
                     if (dbress[0].c > 0) {
-                       db.query("DELETE FROM  user_apps where ua_id=" + req.body.ua_id + " AND app_id=" + req.body.app_id,function (dberr1,dbress) {
+                       db.query("DELETE FROM  user_apps where ua_id=" + req.body.ua_id + " AND app_id=" + req.body.app_id,function (dberr1) {
                            if(dberr1){
                                res.json({"error": true, "message": dberr1.message});
                            }else{
@@ -195,7 +196,6 @@ user_apps.getsingle = function (req,res) {
         //check jwt
 
         try {
-            const c = func.jwtdecode(req, res);
             db.query("select count(*) as c from user_apps where ua_id=" + req.body.ua_id + " AND app_id=" + req.body.app_id, function (dberr, dbress) {
 
 
@@ -222,6 +222,13 @@ user_apps.getsingle = function (req,res) {
         }
     }
 }
+
+
+user_apps.checkForMany = function(request, response){
+    user_apps.all_user_apps.findAll(   
+    )
+}
+
 
 module.exports = {
     user_apps
