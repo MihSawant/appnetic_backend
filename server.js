@@ -4,7 +4,7 @@ const app = express();
 const users = require('./controllers/users/users_c');
 const  db = require('./db/db_conn');var cors = require('cors')
 const aapps = require('./controllers/apps/apps_controller');
-const user_apps = require('./controllers/user_apps/user_apps_c')
+const u_apps_controller = require('./controllers/user_apps/user_apps_c')
 
 
 app.use(express.json());
@@ -21,11 +21,11 @@ app.post('/user/token',users.User.check_jwt);
 app.get('/user/get/info',users.User.get_info);
 //APPS USERS
 
-app.post('/user/app/create',user_apps.user_apps.create);
-app.get('/user/apps',user_apps.user_apps.get);
-app.post('/user/app',user_apps.user_apps.update);
-app.delete('/user/app',user_apps.user_apps.delete);
-app.get('/user/app',user_apps.user_apps.getsingle);
+// app.post('/user/app/create',user_apps.user_apps.create);
+// app.get('/user/apps',user_apps.user_apps.get);
+// app.post('/user/app',user_apps.user_apps.update);
+// app.delete('/user/app',user_apps.user_apps.delete);
+// app.get('/user/app',user_apps.user_apps.getsingle);
 
 
 
@@ -35,6 +35,9 @@ app.get('/user/app',user_apps.user_apps.getsingle);
 
 app.get('/apps/get/all',aapps.aapps.getAll);
 app.post('/apps/create/',aapps.aapps.createnewapp);
+
+// USER APPS
+app.get('/user/app', u_apps_controller.user_apps.getsingle);
 
 // Delete By Owner Id
 app.delete('/user/app/delete/:id', aapps.aapps.delByOwnerId);

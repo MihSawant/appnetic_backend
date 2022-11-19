@@ -8,7 +8,11 @@
 const db = require('../../db/db_conn');
 const func = require("../../others/functions")
 
-const user_apps = require("../../models/user_apps/user_apps_model")
+const {Sequlize, where} = require('sequelize');
+
+const user_apps = require("../../models/user_apps/user_apps_model");
+const sequelize = require('../../db/db_connect');
+const { response } = require('express');
 
 
 
@@ -186,47 +190,75 @@ user_apps.delete = function (req, res) {
 }
 
 
-user_apps.getsingle = function (req,res) {
+user_apps.getsingle =  async function (req,res) {
 
     const schema = user_apps.user_app_delete.validate(req.body);
 
     if (schema.error) {
         res.json({"error": true, "message": schema.error})
     } else {
+        try{
+            var c = await user_apps.checkForMany(req, res);
+            if(c > 0){
+                res.json({"error": true, "message": "App Already Exists!"});
+            } else{
+                res.json({"error": true, "message": "App not Found!"});
+            }
+        }catch(e){
+            res.json({"error": true, "message": e.details});
+        }
+
         //check jwt
 
-        try {
-            db.query("select count(*) as c from user_apps where ua_id=" + req.body.ua_id + " AND app_id=" + req.body.app_id, function (dberr, dbress) {
+        // try {
+        //     db.query("select count(*) as c from user_apps where ua_id=" + req.body.ua_id + " AND app_id=" + req.body.app_id, function (dberr, dbress) {
 
 
-                if (dberr) {
-                    res.json({"error": true, "message": dberr.message});
-                } else {
-                    if (dbress[0].c > 0) {
-                        db.query("SELECT * FROM  user_apps where ua_id=" + req.body.ua_id + " AND app_id=" + req.body.app_id,function (dberr1,dbress) {
-                            if(dberr1){
-                                res.json({"error": true, "message": dberr1.message});
-                            }else{
-                                res.json(dbress[0]);
-                            }
-                        })
-                    }else{
-                        res.json({"error": true, "message": "App Not Found !"});
-                    }
-                }
+        //         if (dberr) {
+        //             res.json({"error": true, "message": dberr.message});
+        //         } else {
+        //             if (dbress[0].c > 0) {
+        //                 db.query("SELECT * FROM  user_apps where ua_id=" + req.body.ua_id + " AND app_id=" + req.body.app_id,function (dberr1,dbress) {
+        //                     if(dberr1){
+        //                         res.json({"error": true, "message": dberr1.message});
+        //                     }else{
+        //                         res.json(dbress[0]);
+        //                     }
+        //                 })
+        //             }else{
+        //                 res.json({"error": true, "message": "App Not Found !"});
+        //             }
+        //         }
 
 
-            });
-        } catch (e) {
-            res.status(419).json({"error": true, "message": e.message})
-        }
+        //     });
+        // } catch (e) {
+        //     res.status(419).json({"error": true, "message": e.message})
+        // }
     }
+
+   
+    
 }
 
 
-user_apps.checkForMany = function(request, response){
-    user_apps.all_user_apps.findAll(   
-    )
+user_apps.checkForMany = async function(request, response){
+    let count = await  user_apps.all_user_apps.count({
+        where:{
+            ua_id : request.body.ua_id,
+            app_id:  request.body.app_id
+           }
+     });
+     return count;
+}
+
+user_apps.findAllDeteilsOfApp = async function(request, response){
+    await user_apps.all_user_apps.findAll({
+        where:{
+            ua_id : request.ua_id,
+            app_id: request.app_id   
+           }
+    });
 }
 
 

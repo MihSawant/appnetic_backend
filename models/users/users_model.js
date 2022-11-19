@@ -39,7 +39,3 @@ module.exports = {
 
     User,User_registers,USer_login,user_name_check
 };
-
-function sum(a, b){
-    return a + b;
-}
