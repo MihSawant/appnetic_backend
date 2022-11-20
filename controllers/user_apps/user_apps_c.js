@@ -152,7 +152,7 @@ user_apps.update = function (req, res) {
 
 }
 
-user_apps.delete = function (req, res) {
+user_apps.delete = async function (req, res) {
     //check schema
     const schema = user_apps.user_app_delete.validate(req.body);
 
@@ -161,31 +161,43 @@ user_apps.delete = function (req, res) {
     } else {
         //check jwt
 
-        try {
-            db.query("select count(*) as c from user_apps where ua_id=" + req.body.ua_id + " AND app_id=" + req.body.app_id, function (dberr, dbress) {
-
-
-                if (dberr) {
-                    res.json({"error": true, "message": dberr.message});
-                } else {
-                    if (dbress[0].c > 0) {
-                       db.query("DELETE FROM  user_apps where ua_id=" + req.body.ua_id + " AND app_id=" + req.body.app_id,function (dberr1) {
-                           if(dberr1){
-                               res.json({"error": true, "message": dberr1.message});
-                           }else{
-                               res.json({"error": false, "message": "Deleted Successfully !"});
-                           }
-                       })
-                    }else{
-                        res.json({"error": true, "message": "App Not Found !"});
-                    }
-                }
-
-
-            });
-        } catch (e) {
-            res.status(419).json({"error": true, "message": e.message})
+        try{
+          var c = await user_apps.checkForMany(req, res);
+          if(c > 0){
+            user_apps.deleteAppsByNameAndId(req, res);
+            res.status(200).json({"error":false, "message": "App Deleted Successfully"});
+          } else{
+            res.json({"error": true, "message": "App Not Found!"});
+          }
+        }catch(e){
+            res.status(419).json({"error": true, "message": e.message});
         }
+
+        // try {
+        //     db.query("select count(*) as c from user_apps where ua_id=" + req.body.ua_id + " AND app_id=" + req.body.app_id, function (dberr, dbress) {
+
+
+        //         if (dberr) {
+        //             res.json({"error": true, "message": dberr.message});
+        //         } else {
+        //             if (dbress[0].c > 0) {
+        //                db.query("DELETE FROM  user_apps where ua_id=" + req.body.ua_id + " AND app_id=" + req.body.app_id,function (dberr1) {
+        //                    if(dberr1){
+        //                        res.json({"error": true, "message": dberr1.message});
+        //                    }else{
+        //                        res.json({"error": false, "message": "Deleted Successfully !"});
+        //                    }
+        //                })
+        //             }else{
+        //                 res.json({"error": true, "message": "App Not Found !"});
+        //             }
+        //         }
+
+
+        //     });
+        // } catch (e) {
+        //     res.status(419).json({"error": true, "message": e.message})
+        // }
     }
 }
 
@@ -205,7 +217,7 @@ user_apps.getsingle =  async function (req,res) {
                 res.json({"error": true, "message": "App not Found!"});
             }
         }catch(e){
-            res.json({"error": true, "message": e.details});
+            res.status(419).json({"error": true, "message": e.details});
         }
 
         //check jwt
@@ -258,6 +270,15 @@ user_apps.findAllDeteilsOfApp = async function(request, response){
             ua_id : request.ua_id,
             app_id: request.app_id   
            }
+    });
+}
+
+user_apps.deleteAppsByNameAndId = async function(request, response){
+    await user_apps.all_user_apps.destroy({
+        where:{
+            ua_id : request.body.ua_id,
+            app_id : request.body.app_id
+        }
     });
 }
 

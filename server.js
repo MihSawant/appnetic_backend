@@ -38,6 +38,7 @@ app.post('/apps/create/',aapps.aapps.createnewapp);
 
 // USER APPS
 app.get('/user/app', u_apps_controller.user_apps.getsingle);
+app.delete('/user/app', u_apps_controller.user_apps.delete);
 
 // Delete By Owner Id
 app.delete('/user/app/delete/:id', aapps.aapps.delByOwnerId);
